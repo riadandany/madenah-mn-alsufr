@@ -6,15 +6,21 @@ const path = require('path');
 const crypto = require('crypto');
 
 const PORT = +process.env.PORT || 3010;
-const HOST = process.env.HOST || '127.0.0.1';                // لا تكشف المنفذ للإنترنت — nginx فقط
+const TRUST_PROXY = +process.env.TRUST_PROXY || 0;            // عدد البروكسيات الموثوقة أمام السيرفر (Render/Railway = 1، ومع Cloudflare = 2)
+const HOST = process.env.HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1');                // لا تكشف المنفذ للإنترنت — nginx فقط
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';          // لحذف بيت مسيء
 const MAX_PER_IP = +process.env.MAX_PER_IP || 5;            // أقصى بيوت جديدة من نفس الشبكة خلال 24 ساعة (شبكات الجوال يتشاركها ناس كثير، والجهاز الواحد = بيت واحد أصلاً)
 const MAX_LIKES_PER_IP = +process.env.MAX_LIKES_PER_IP || 3; // أقصى لايكات لنفس البيت من نفس الشبكة
-const DATA = process.env.DATA_FILE || path.join(__dirname, 'data', 'houses.json');
+let DATA = process.env.DATA_FILE || path.join(__dirname, 'data', 'houses.json');
 const PUB = path.join(__dirname, 'public');
 
 // ---------- البيانات ----------
-fs.mkdirSync(path.dirname(DATA), { recursive: true });
+try { fs.mkdirSync(path.dirname(DATA), { recursive: true }); fs.accessSync(path.dirname(DATA), fs.constants.W_OK); }
+catch (e) {   // قرص للقراءة فقط (مثل Vercel): نكمل على مجلد مؤقت بدل ما نوقع السيرفر — البيانات تضيع عند إعادة التشغيل
+  const tmp = path.join(require('os').tmpdir(), 'madinah-data'); fs.mkdirSync(tmp, { recursive: true });
+  console.error('تحذير: مجلد البيانات غير قابل للكتابة (' + e.message + ') — سنستخدم ' + tmp + ' والبيانات غير دائمة!');
+  DATA = path.join(tmp, 'houses.json');
+}
 let houses = [];
 try { houses = JSON.parse(fs.readFileSync(DATA, 'utf8')); } catch { houses = []; }
 // الحوش صار 3 مواقف: السيارات القديمة (كانت 8 أماكن) ترتّب على أول 3
@@ -200,6 +206,7 @@ const ipOf = req => {
   const fwd = req.headers['x-forwarded-for'];
   const remote = req.socket.remoteAddress || '';
   if (fwd && (remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1')) return fwd.split(',')[0].trim();
+  if (fwd && TRUST_PROXY > 0) { const a = fwd.split(',').map(x => x.trim()).filter(Boolean); return a[Math.max(0, a.length - TRUST_PROXY)] || remote; }   // خلف بروكسي الاستضافة: نأخذ العنوان اللي أضافه البروكسي الموثوق (من اليمين) لأن اليسار يقدر المستخدم يزوّره
   return remote;
 };
 // IPv6: كل مشترك عنده /64 كامل (ملايين العناوين) — نحسب الشبكة بأول 4 مقاطع حتى ما يتجاوز الحدود بتغيير العنوان

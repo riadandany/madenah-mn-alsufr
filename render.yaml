@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: madinah
+    runtime: docker
+    plan: starter          # القرص الدائم يحتاج خطة مدفوعة
+    healthCheckPath: /
+    envVars:
+      - key: DATA_FILE
+        value: /data/houses.json
+      - key: TRUST_PROXY
+        value: "2"         # Render خلفه Cloudflare؛ لو ظهر كل اللاعبين بنفس الـIP جرّب 1
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: PUBLIC_URL
+        sync: false        # ضع رابط موقعك بعد أول نشر
+    disk:
+      name: madinah-data
+      mountPath: /data
+      sizeGB: 1
