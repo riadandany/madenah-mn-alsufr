@@ -1,0 +1,18 @@
+{
+  "name": "مدينة من الصفر",
+  "short_name": "مدينة من الصفر",
+  "description": "ابنِ بيتك باسمك والعب مع أصحابك في مدينة من الصفر",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?src=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#9fd3ef",
+  "theme_color": "#ff8a00",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

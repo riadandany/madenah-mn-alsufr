@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>مدينة من الصفر — حط بيتك</title>
+<meta name="description" content="مدينة يبنيها مشتركين قناة من الصفر. اكتب اسمك واختر بيتك وحطه في المدينة.">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#ff8a00">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مدينة من الصفر">
+<style>
+@font-face{font-family:Cairo;src:url(/Cairo.woff2?v=1) format('woff2'),url(/Cairo.ttf) format('truetype');font-weight:200 1000;font-display:swap}
+html,body{margin:0;height:100%;overflow:hidden;background:#9fd3ef;font-family:Cairo,system-ui,sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
+canvas{display:block}
+.top{position:fixed;top:10px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none}
+.tag{background:rgba(12,22,34,.6);color:#fff;font-weight:900;font-size:20px;padding:4px 20px;border-radius:16px}
+.count{display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:94vw;box-sizing:border-box;overflow:hidden;background:rgba(255,255,255,.9);color:#12324a;font-weight:800;font-size:13px;padding:5px 14px;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.16)}
+.count .sep{width:1px;height:15px;background:#b8c4cc;flex:none}.count .hm{cursor:pointer;background:#fff1e3;border-radius:10px;padding:0 7px;font-size:15px;flex:none}.gbtn{background:#fff!important;color:#1f2d3a!important;border:2px solid #4285F4!important;font-weight:900}#wSet{position:relative}#wSet.warn::after,#wMore.warn::after{content:"!";position:absolute;top:-5px;right:-5px;width:21px;height:21px;border-radius:50%;background:#e5252a;color:#fff;font:900 14px/17px system-ui,sans-serif;text-align:center;border:2px solid #fff;box-sizing:border-box;animation:gw 1.6s ease-in-out infinite}@keyframes gw{50%{transform:scale(1.18)}}
+.says .gh{grid-column:1/-1;font-weight:900;font-size:12px;color:#5a6b7b;margin:6px 2px 0}
+body.mcOn .whud,body.mcOn .top,body.mcOn #chat,body.mcOn #bar,body.mcOn #joy,body.mcOn #jumpBtn,body.mcOn #inbox,body.mcOn #doorBtn,body.mcOn #parkBtn,body.mcOn #gameBtn,body.mcOn #fairBtn,body.mcOn #worldBtn,body.mcOn #knockBox,body.mcOn #cqBox,body.mcOn #raceOut,body.mcOn #carBtn,body.mcOn #brakeBtn,body.mcOn #gasBtn,body.mcOn #inBox{display:none!important}
+.count .ch{flex:none}.count .box{flex:none;border:2px solid #e0a82e;background:#fff7e0;border-radius:12px;padding:1px 9px;cursor:pointer}.count .lv{flex:none;display:inline-flex;align-items:center;gap:5px;border:2px solid #5b8def;background:#eef3ff;border-radius:12px;padding:1px 6px 1px 9px}.count .lv b{display:inline-block;min-width:22px;text-align:center;border:2px solid #5b8def;background:#fff;border-radius:50%;padding:0 3px;line-height:1.35;font-size:12px}
+#prog{display:none!important}
+body{--t:48px}body.hasChat:not(.chatMin){--t:116px}
+#chat{position:fixed;top:46px;left:8px;width:calc(100vw - 84px);max-width:300px;background:rgba(12,22,34,.66);color:#fff;border-radius:12px;z-index:3;display:none;font-size:12px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+#chatHead{display:flex;justify-content:space-between;align-items:center;padding:0 8px;font-size:10px;line-height:16px;opacity:.85}
+#chatTog{padding:0 8px;font-size:12px;line-height:14px;background:transparent;color:#fff;box-shadow:none;border-radius:8px}
+#chatlist{max-height:44px;overflow-y:auto;padding:0 8px 4px;line-height:1.45;-webkit-overflow-scrolling:touch;touch-action:pan-y;word-break:break-word}
+#chatlist>div{padding:1px 0;cursor:pointer}body.chatMin #chatlist{display:none}
+@media(min-width:640px){#chat{left:50%;transform:translateX(-50%);width:300px}}
+.bar{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;display:flex;gap:8px;justify-content:center;padding:0 10px}
+button{font-family:inherit;font-weight:800;font-size:16px;border:0;border-radius:24px;padding:11px 20px;background:rgba(255,255,255,.94);color:#1d2b36;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer}
+button.main{background:#ff7414;color:#fff;font-size:18px;padding:12px 26px}
+button:disabled{opacity:.5}
+.panel{z-index:6;position:fixed;left:12px;right:12px;bottom:max(16px,env(safe-area-inset-bottom));background:#fff;border-radius:22px;padding:16px;box-shadow:0 6px 30px rgba(0,0,0,.25);display:none;max-width:460px;margin:0 auto}
+.panel h3{margin:0 0 10px;font-size:19px;color:#1d2b36}
+input{width:100%;box-sizing:border-box;font-family:inherit;font-size:18px;padding:10px 14px;border:2px solid #d8dee3;border-radius:14px;outline:none;text-align:right}
+input:focus{border-color:#ff7414}
+.types{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.types button{padding:8px 2px;font-size:13px;border-radius:14px;background:#f1f4f6;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+.types button.sel{background:#ff7414;color:#fff}
+.types svg{width:34px;height:34px}
+.row{display:flex;gap:8px;justify-content:space-between}
+.row button{flex:1}
+.msg{min-height:20px;color:#c0392b;font-size:14px;margin-top:6px;text-align:center}
+.toast{position:fixed;top:var(--t);left:50%;transform:translateX(-50%);background:rgba(12,22,34,.82);color:#fff;padding:6px 13px;border-radius:14px;font-size:13.5px;line-height:1.55;opacity:0;transition:opacity .3s;pointer-events:none;max-width:calc(100vw - 140px);text-align:center}
+.card{position:fixed;top:calc(var(--t,50px) + 6px);z-index:4;left:50%;transform:translateX(-50%);background:#fff;border-radius:18px;padding:10px 18px;box-shadow:0 4px 18px rgba(0,0,0,.2);text-align:center;display:none;min-width:180px}
+.card b{font-size:20px;display:block;color:#1d2b36}.card span{font-size:14px;color:#5b6b75}
+.card{pointer-events:auto;min-width:230px}.card .acts{display:flex;gap:6px;justify-content:center;margin-top:8px}.card .acts button{padding:7px 14px;font-size:15px}
+.card .x{position:absolute;top:4px;left:10px;font-size:18px;color:#8a97a0;cursor:pointer}
+.heart.on{background:#e94f3b;color:#fff}
+.prog{background:rgba(255,116,20,.92);color:#fff;font-weight:800;font-size:13px;padding:1px 12px;border-radius:12px;display:none}
+/* 🎯 هدفك الجاي: شريط واحد دايم تحت العدّاد — الضغط يوديك للمكان/اللوحة */
+.goal{pointer-events:auto;display:none;flex-direction:column;align-items:stretch;gap:3px;max-width:min(78vw,340px);background:rgba(20,28,45,.86);color:#fff;border:2px solid #ffc531;border-radius:14px;padding:4px 12px 6px;font:800 13px/1.35 Cairo,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.goal .gl-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal .gl-b{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden}
+.goal .gl-b i{display:block;height:100%;width:0;background:#ffc531;transition:width .4s}
+.goal.done{animation:glPop .6s}
+/* 🎉 الفعالية: شغّالة (أحمر نابض) أو الجاية (عدّاد) — الضغط يوديك لمكانها */
+.evt{pointer-events:auto;display:none;align-items:center;gap:6px;max-width:min(78vw,340px);background:rgba(20,28,45,.82);color:#fff;border:0;border-radius:12px;padding:3px 12px;font:800 12.5px/1.4 Cairo,sans-serif;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evt.on{background:#e8364d;animation:evPulse 1.6s infinite}
+@keyframes evPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,54,77,.6)}50%{box-shadow:0 0 0 7px rgba(232,54,77,0)}}
+body.hasGoal .toast{top:calc(var(--t) + 46px)}
+body.hasEvt .toast{top:calc(var(--t) + 32px)}
+body.hasGoal.hasEvt .toast{top:calc(var(--t) + 78px)}
+@keyframes glPop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.ec{display:flex;justify-content:space-between;font-size:18px;font-weight:900;background:#fff4d6;border-radius:12px;padding:8px 12px;margin-bottom:6px}
+#eco18 h4{margin:12px 0 4px;font-size:15px}.er{font-size:14px;margin:4px 0;line-height:1.7}.eb{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.eb button,.er button{font-size:13px;padding:6px 10px;border-radius:12px}.eb button.on{background:#2fb344;color:#fff}#p18{max-width:460px}.wl-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-bottom:10px}.wl-st{background:#f3f6fa;border-radius:16px;padding:10px 6px;text-align:center}.wl-st b{display:block;font-size:22px;font-weight:900}.wl-st small{font-size:12px;color:#5b6773}.wl-st.gold{background:linear-gradient(135deg,#ffe8a3,#ffd166);box-shadow:inset 0 0 0 2px #f2b705}
+.wl-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#eef2f6;border-radius:14px;padding:4px;margin-bottom:10px;position:sticky;top:-2px;z-index:2}.wl-tabs button{font-size:12.5px;padding:8px 2px;border-radius:11px;background:transparent;border:0;font-weight:800;color:#45525e;white-space:nowrap}.wl-tabs button.on{background:#fff;color:#1d2b36;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.wl-card{background:#fff;border:2px solid #e6ebf1;border-radius:16px;padding:10px 12px;margin-bottom:10px}.wl-h{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:15px;margin-bottom:6px}.wl-h span{background:#eef2f6;border-radius:10px;padding:1px 9px;font-size:13px}.wl-h small{font-weight:600;color:#6b7783;font-size:12px}
+.wl-task{padding:6px 0;border-bottom:1px dashed #e6ebf1}.wl-task:last-of-type{border-bottom:0}.wl-task.ok .wl-tn span{color:#2b8a3e}.wl-tn{display:flex;justify-content:space-between;align-items:center;font-size:14px;gap:6px}.wl-tn small{color:#6b7783;font-weight:700}
+.wl-pb{height:9px;background:#e9edf2;border-radius:6px;overflow:hidden;margin-top:5px}.wl-pb i{display:block;height:100%;background:#4c9aff;border-radius:6px}
+.wl-note{font-size:13px;color:#4f5b66;line-height:1.7;margin-top:6px}
+.wl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.wl-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:14px;border:2px solid #e6ebf1;background:#fafbfc;font-size:12.5px;font-weight:800;color:#1d2b36}.wl-item b{font-size:24px}.wl-item small{font-size:11px;color:#6b7783;font-weight:700;text-align:center}.wl-item.on{border-color:#2fb344;background:#ebfbee}.wl-item:disabled{opacity:.7}
+.wl-buy{width:100%;margin-top:8px;background:#ff8a00;color:#fff;font-weight:900;font-size:15px;padding:11px;border-radius:14px;border:0}.wl-sm{margin-top:8px;font-size:12px;padding:6px 10px;border-radius:10px}
+.wl-inv{background:linear-gradient(160deg,#fff8e1,#fff);border-color:#ffd166}.wl-big{font-size:18px;font-weight:900;text-align:center;margin:4px 0}.wl-big b{color:#e67700}.wl-link{background:#f3f6fa;border-radius:10px;padding:8px;font-size:12.5px;word-break:break-all;margin-top:8px;text-align:center;font-family:monospace}
+.wl-lb{display:flex;justify-content:space-between;font-size:14px;padding:6px 8px;border-radius:10px;background:#f6f8fa;margin:4px 0}
+#instBar{position:fixed;left:10px;right:10px;bottom:max(12px,env(safe-area-inset-bottom));z-index:7;display:none;align-items:center;gap:10px;background:#fff;border-radius:18px;padding:10px 12px;box-shadow:0 8px 30px rgba(0,0,0,.28);max-width:460px;margin:0 auto;border:2px solid #ffd8a8}#instBar img{width:44px;height:44px;border-radius:11px;flex:none}#instBar div{flex:1;min-width:0;line-height:1.35}#instBar b{display:block;font-size:14px}#instBar small{font-size:12px;color:#5b6773}#instGo{flex:none;background:#ff8a00;color:#fff;font-weight:900;border:0;border-radius:12px;padding:8px 14px;font-size:15px}#instX{flex:none;background:transparent;border:0;font-size:16px;color:#868e96;padding:4px 6px}
+.lvs{flex:none;position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:26px;cursor:pointer}.lvs i{font-style:normal;font-size:27px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}.lvs b{position:absolute;left:0;right:0;top:3px;bottom:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#5a3a00;line-height:1}
+.lv.sm{padding:0 5px 0 7px;gap:3px;font-size:13px}.lv.sm b{min-width:18px;font-size:11px;line-height:1.3}
+.mkt{flex:none;display:inline-flex;align-items:center;justify-content:center;border:2px solid #ff8a00;background:linear-gradient(180deg,#fff4e0,#ffe2b8);border-radius:12px;padding:0 6px;cursor:pointer;font-size:15px;line-height:1.45;box-shadow:0 2px 6px rgba(255,138,0,.25)}
+#p30{max-width:520px;max-height:90vh;overflow:hidden}
+.mk-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.mk-head h3{margin:0}.mk-coins{background:linear-gradient(135deg,#ffe8a3,#ffd166);border:2px solid #f2b705;border-radius:14px;padding:3px 12px;font-weight:900;font-size:16px}
+.mk-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 6px;scrollbar-width:none;flex:none}.mk-tabs::-webkit-scrollbar{display:none}.mk-tabs button{flex:none;font-size:13px;padding:7px 12px;border-radius:999px;border:2px solid #e6ebf1;background:#fff;font-weight:800;white-space:nowrap}.mk-tabs button.on{background:#ff8a00;border-color:#ff8a00;color:#fff}
+.mk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;padding:2px 2px 8px;max-height:58vh;min-height:180px}
+.mk-it{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 8px;border-radius:16px;border:2px solid #e6ebf1;background:#fff;font-size:12.5px;font-weight:800;color:#1d2b36;position:relative}
+.mk-it b{font-size:12.5px;line-height:1.3;text-align:center;min-height:2.6em;display:flex;align-items:center}
+.mk-p{font-size:12px;font-weight:900;color:#b35c00;background:#fff4e0;border-radius:10px;padding:1px 8px}
+.mk-it.own .mk-p{color:#2b8a3e;background:#ebfbee}.mk-it.worn{border-color:#2fb344;box-shadow:0 0 0 2px #2fb34433}
+.mk-it.good{border-color:#74c0fc}.mk-it.rare{border-color:#f2b705;background:linear-gradient(180deg,#fffaf0,#fff)}.mk-it.leg{border-color:#9c36b5;background:linear-gradient(180deg,#f8f0fc,#fff);box-shadow:0 0 12px #be4bdb55}
+.mk-it.rare::after,.mk-it.leg::after{content:'✦ نادر';position:absolute;top:4px;left:6px;font-size:9px;color:#b78103;font-weight:900}.mk-it.leg::after{content:'✦ أسطوري';color:#9c36b5}
+.mk-th{width:64px;height:76px;display:flex;align-items:center;justify-content:center}.mk-th img{width:100%;height:100%;object-fit:contain}.mk-th.emo{font-size:38px}.mk-th.big{width:120px;height:140px}.mk-th.big.emo{font-size:72px}
+.mk-sw{display:block;width:46px;height:46px;border-radius:12px;border:3px solid #fff;box-shadow:0 0 0 2px #d0d7de}
+.mk-sheet{position:absolute;inset:0;background:rgba(15,20,35,.55);display:none;align-items:flex-end;justify-content:center;z-index:5}
+.mk-card{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 -6px 30px rgba(0,0,0,.25)}
+.mk-card.rare{background:linear-gradient(180deg,#fff6d8,#fff)}.mk-card.leg{background:linear-gradient(180deg,#f3d9fa,#fff)}
+.mk-card h4{margin:2px 0 0;font-size:20px;font-weight:900}.mk-meta{font-size:13px;color:#5b6773}.mk-need{font-size:12.5px;color:#c92a2a;text-align:center}
+.mk-card input{width:100%;font-size:16px;padding:10px;border-radius:12px;border:2px solid #e6ebf1;text-align:center}
+.mk-buy{width:100%;background:linear-gradient(180deg,#ff9f1c,#e46f00);color:#fff;font-weight:900;font-size:17px;padding:12px;border-radius:14px;border:0;box-shadow:0 4px 0 #a64b00}.mk-buy:disabled{background:#c9d1d9;box-shadow:none;color:#fff}.mk-buy.wear{background:linear-gradient(180deg,#40c057,#2b8a3e);box-shadow:0 4px 0 #1f6d30}
+.mk-x{width:100%;background:#f1f3f5;border:0;border-radius:12px;padding:9px;font-weight:800}
+#wardrobe .mko{background:#fff4e0;border-color:#ffc078;color:#b35c00}
+#shop6 .lockd img{filter:grayscale(.15) brightness(.97)}#shop6 .lockd span{color:#b35c00}
+.lbx{font-size:13px;background:#f6f8f9;border-radius:10px;padding:5px 8px;margin:3px 0}
+.cb{font-size:11px;padding:0 6px;margin-inline-start:4px;border-radius:8px;background:rgba(255,255,255,.2);color:#fff;box-shadow:none}
+.info{font-size:14px;color:#5b6b75;margin:10px 0 12px;line-height:1.6}
+.lb{max-height:46vh;overflow:auto;margin:6px 0 10px}.lb div{display:flex;justify-content:space-between;padding:9px 6px;border-bottom:1px solid #eef1f3;font-size:16px;cursor:pointer}.lb div b{color:#ff7414}
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#9fd3ef;color:#12324a;font-weight:900;font-size:22px;transition:opacity .4s;z-index:9}
+.lbl{display:block;font-size:14px;color:#5b6b75;margin:10px 0 4px}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+button.danger{background:#fdecea;color:#c0392b;box-shadow:none}
+@media(max-width:420px){.bar{gap:6px}.bar button{padding:10px 12px;font-size:15px}.bar button.main{padding:11px 16px;font-size:16px}}
+.chars{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:4px 0 6px}
+.chars button{padding:2px 0 3px;border-radius:12px;background:#f1f4f6;box-shadow:none;display:flex;flex-direction:column;align-items:center;font-size:11px;line-height:1.3;border:2px solid transparent}
+.chars button.sel{border-color:#ff7414;background:#fff3ea}
+.chars img{width:100%;max-width:64px;aspect-ratio:4/5;object-fit:contain;display:block}
+.whud{position:fixed;right:10px;top:max(54px,env(safe-area-inset-top));display:none;flex-direction:column;gap:8px}
+.whud button{width:44px;height:44px;padding:0;font-size:20px;border-radius:50%;position:relative}
+.whud .w2{display:none}body.whMore .whud .w2{display:block}#wMore{background:#1d2b36;color:#fff;font-size:21px;font-weight:900}body.whMore #wMore{background:#ff7414}
+body.vox #wCar,body.vox #wExit,body.vox #wEmote{display:none!important}
+#joy{position:fixed;left:22px;bottom:max(26px,env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.75);display:none;touch-action:none}
+.says{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:6px 0 10px;max-height:52vh;overflow:auto}
+.says button{padding:9px 6px;font-size:15px;border-radius:14px;background:#f1f4f6;box-shadow:none}
+#countries{grid-template-columns:repeat(3,1fr)}#countries button{font-size:14px}
+#inbox{position:fixed;top:48px;left:50%;transform:translateX(-50%);background:#fff;color:#1d2b36;border-radius:18px;padding:7px 8px 7px 12px;box-shadow:0 4px 18px rgba(0,0,0,.25);display:none;align-items:center;gap:8px;font-size:13px;max-width:92vw;max-height:42vh;overflow:auto;z-index:3}#inbox span{cursor:pointer}
+#inbox span{word-break:break-word;line-height:1.5}
+.hist{max-height:52vh;overflow:auto;margin:6px 0 10px}.hist>div{background:#f3f6f8;border-radius:12px;padding:7px 11px;margin:6px 0;font-size:14px;line-height:1.6;word-break:break-word}.hist small{color:#8a97a0;font-size:11px}
+#inbox button{padding:6px 16px;font-size:14px;background:#ff7414;color:#fff;box-shadow:none}
+#p6{max-height:88vh;overflow:auto}
+.count{pointer-events:auto}
+.rep{border:1px solid #e3e8ec;border-radius:14px;padding:8px 10px;margin:8px 0}
+.rep .rs{font-size:13px;color:#5b6b75}
+.rep .lg{font-size:13px;background:#f6f8f9;border-radius:8px;padding:6px;margin:6px 0;color:#1d2b36}
+.rep .ra{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.rep .ra button{padding:6px 12px;font-size:14px}
+.opts{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.opts button{flex:0 0 auto;padding:7px 12px;font-size:14px;border-radius:14px;background:#f1f4f6;box-shadow:none}
+.opts button.sel{background:#ff7414;color:#fff}
+.opts button:disabled{opacity:.55}
+#jumpBtn{position:fixed;right:16px;bottom:max(100px,env(safe-area-inset-bottom));display:none;background:#fff;color:#1d2b36;font-size:17px;padding:13px 20px;border-radius:30px;box-shadow:0 4px 16px rgba(0,0,0,.3);touch-action:none}
+#doorBtn{position:fixed;left:50%;transform:translateX(-50%);bottom:max(150px,env(safe-area-inset-bottom));display:none;background:#2fb344;color:#fff;font-size:18px;padding:14px 26px;border-radius:30px;box-shadow:0 4px 16px rgba(0,0,0,.35);z-index:5}
+#inBox{position:fixed;left:12px;bottom:max(34px,env(safe-area-inset-bottom));display:none;gap:8px;z-index:5}#inBox button{padding:12px 16px;font-size:15px;border-radius:24px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#cqBox{position:fixed;left:50%;transform:translateX(-50%);top:max(130px,env(safe-area-inset-top));display:none;background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 6px 28px rgba(0,0,0,.35);z-index:8;min-width:250px;max-width:92vw;text-align:center}#cqT{font-weight:900;font-size:16px;margin-bottom:10px}#cqDest .sel,#cqPpl .sel{background:#ffe6b8!important;font-weight:900}#cqPpl div{display:flex;justify-content:space-between}
+#knockBox{position:fixed;left:50%;transform:translateX(-50%);top:max(130px,env(safe-area-inset-top));display:none;background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 6px 28px rgba(0,0,0,.35);z-index:7;min-width:240px;text-align:center}#knockT{font-weight:900;font-size:17px;margin-bottom:8px}
+#raceOut{position:fixed;left:12px;top:max(54px,env(safe-area-inset-top));display:none;background:#fff;color:#b3261e;font-size:13px;padding:7px 12px;border-radius:18px;box-shadow:0 3px 10px rgba(0,0,0,.3);z-index:5}
+/* دعّاسات: السرعة طويلة وضيقة، الفرامل أعرض وأقصر (مثل ألعاب السباق)، وتنضغط للأسفل لما تلمسها */
+#brakeBtn,#gasBtn{position:fixed;bottom:max(26px,env(safe-area-inset-bottom));display:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;padding:0;border:3px solid rgba(255,255,255,.4);box-shadow:0 6px 0 rgba(0,0,0,.35),0 8px 18px rgba(0,0,0,.4);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;z-index:5;transition:transform .06s,box-shadow .06s,filter .06s;transform-origin:50% 100%}
+#brakeBtn i,#gasBtn i{font-style:normal;font-size:28px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}#brakeBtn b,#gasBtn b{font-size:14px;font-weight:900;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+#gasBtn{right:14px;width:76px;height:136px;border-radius:20px 20px 26px 26px;background:repeating-linear-gradient(180deg,rgba(0,0,0,.18) 0 4px,transparent 4px 14px),linear-gradient(180deg,#2fc46b,#17884a)}
+#brakeBtn{right:100px;width:104px;height:92px;border-radius:18px 18px 24px 24px;background:repeating-linear-gradient(180deg,rgba(0,0,0,.2) 0 4px,transparent 4px 14px),linear-gradient(180deg,#ef4b3f,#b3261e)}
+#brakeBtn:active,#gasBtn:active,#brakeBtn.on,#gasBtn.on{transform:perspective(260px) rotateX(24deg) translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.35),0 3px 8px rgba(0,0,0,.4);filter:brightness(.88)}
+body.drv #carBtn{bottom:max(176px,env(safe-area-inset-bottom));padding:10px 18px;font-size:15px}
+#parkBtn{position:fixed;right:16px;bottom:max(250px,env(safe-area-inset-bottom));display:none;background:#2f9e44;color:#fff;font-size:17px;padding:13px 20px;border-radius:30px;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:3;border:0;font-weight:800}
+#carBtn{position:fixed;right:16px;bottom:max(34px,env(safe-area-inset-bottom));display:none;background:#ff7414;color:#fff;font-size:18px;padding:14px 22px;border-radius:30px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.moreHint{position:sticky;bottom:0;display:block;margin:8px auto 0 0;background:#ff7414;color:#fff;font-weight:900;font-size:17px;border-radius:24px;padding:10px 22px;border:0;box-shadow:0 3px 12px rgba(0,0,0,.35);animation:mh 1.1s ease-in-out infinite;z-index:2}@keyframes mh{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.panel .says,.panel .lb{max-height:none}
+/* لوحات الجوال */@media (max-width:600px){.panel{left:6px;right:6px;bottom:max(6px,env(safe-area-inset-bottom));padding:12px 12px 10px;border-radius:18px}.panel h3{margin:0 0 6px}}
+#knob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none}
+
+/* ===== الجوال/الآيباد بالعرض (الارتفاع قصير): أزرار الجانب صفّين أعلى اليسار، اللوحات تتمرّر، الألعاب عمودين ===== */
+@media (orientation:landscape) and (max-height:560px){
+ .whud{flex-direction:row;flex-wrap:wrap;gap:6px;right:auto;left:max(10px,env(safe-area-inset-left));top:max(48px,env(safe-area-inset-top));max-width:176px}
+ .whud button{width:38px;height:38px;font-size:18px}
+ .panel{max-height:calc(100vh - 14px);max-height:calc(100dvh - 14px);overflow-y:auto;bottom:max(6px,env(safe-area-inset-bottom));padding:10px 14px;max-width:min(94vw,680px);-webkit-overflow-scrolling:touch}
+ .panel h3{margin:0 0 6px;font-size:17px}.panel button{padding:9px 14px;font-size:15px}
+ #chat{left:auto;right:max(10px,env(safe-area-inset-right));transform:none;top:max(52px,env(safe-area-inset-top));width:min(40vw,330px)}#chatlist{max-height:64px}body.hasChat:not(.chatMin){--t:48px}
+ #jumpBtn{padding:10px 18px;font-size:15px;bottom:max(70px,env(safe-area-inset-bottom))}
+ #carBtn{padding:10px 18px;font-size:15px;bottom:max(14px,env(safe-area-inset-bottom))}
+ #gasBtn{height:112px;width:66px}#brakeBtn{height:78px;width:90px;right:88px}
+ #brakeBtn i,#gasBtn i{font-size:22px}#brakeBtn b,#gasBtn b{font-size:12px}
+ body.drv #carBtn{right:196px;bottom:max(30px,env(safe-area-inset-bottom))}
+ #gameBtn{bottom:max(80px,env(safe-area-inset-bottom))!important}
+ #doorBtn{bottom:max(64px,env(safe-area-inset-bottom))}#knockBox{top:max(64px,env(safe-area-inset-top))}#inBox button{padding:8px 12px;font-size:14px}
+ #gameOv #gBody{max-width:min(96vw,920px)!important;overflow-y:auto;-webkit-overflow-scrolling:touch}
+ #gameOv>div:first-child{padding:6px 14px!important}
+ #gBody.mg{display:grid!important;grid-template-columns:auto 1fr;grid-auto-rows:min-content;align-items:start!important;align-content:start!important;justify-content:center!important;column-gap:16px;justify-items:center}
+#gBody.mg>*{min-width:0;max-width:100%} #gBody.mg .mgArea{grid-column:1;grid-row:1/span 6}#gBody.mg>*:not(.mgArea){grid-column:2}
+}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="/Cairo.woff2?v=1" as="font" type="font/woff2" crossorigin>
+<script src="/icons.js?v=3"></script><script src="/boot.js?v=3"></script>
+<script type="module" src="/app.js?v=129"></script>
+</head>
+<body>
+<div id="load">جاري تحميل المدينة…</div>
+<div class="top"><div class="count" id="count"></div><div class="prog" id="prog"></div><button type="button" class="goal" id="goal"><span class="gl-t"></span><span class="gl-b"><i></i></span></button><button type="button" class="evt" id="evt"></button></div>
+<div class="toast" id="toast"></div>
+<div id="chat"><div id="chatHead"><span>💬 الدردشة <small id="chatCnt"></small></span><button id="chatTog" title="إخفاء/إظهار الدردشة">▾</button></div><div id="chatlist"></div></div>
+<div class="card" id="card"><span class="x" id="cX">✕</span><b id="cName"></b><span id="cInfo"></span><div class="acts" id="cActs"></div></div>
+<div class="bar" id="bar"><button class="main" id="add">🏠 حط بيتك</button><button id="find">🔑 لي بيت</button><button id="mine" style="display:none">🏠 بيتي</button><button id="share" style="display:none">📤 رابط بيتي</button><button id="walk">🚶 تمشّى</button><button id="top">🏆</button></div>
+<div class="whud" id="whud"><button id="wBuild" title="حط بيتك" style="background:#ff7414;color:#fff">➕</button><button id="wFind" title="عندي بيت — ارجع له برمزي">🔑</button><button id="wHome" title="الساحة أو بيتي">🏠</button><button id="wCar" title="نزّل سيارة قدّامك وتنقّل فيها" style="background:#ff7414;color:#fff">🚗</button><button id="wChat" title="رسالة للي حولك">💬</button><button id="wMore" title="المزيد">☰</button><button class="w2" id="wPeople" title="الناس اللي حولك">👥</button><button class="w2" id="wEmote" title="رقص أو جلوس">🕺</button><button class="w2" id="wChar" title="غيّر شخصيتك">👕</button><button class="w2" id="wExit" title="منظر المدينة من فوق">🏙️</button><button class="w2" id="wSet" title="الإعدادات">⚙️</button></div>
+<div id="inbox"></div>
+<button id="parkBtn"></button>
+<button id="doorBtn">🚪</button>
+<button id="raceOut">🏳️ انسحب من السباق</button>
+<div id="inBox"><button id="inExit">🚪 اطلع</button><button id="inSleep">😴 نام</button><button id="inPpl">👥 اللي داخل</button></div>
+<div id="knockBox"><div id="knockT"></div><div class="row"><button class="main" id="knockYes">✅ اسمح</button><button id="knockNo">❌ ارفض</button></div><div class="info" style="margin:6px 0 0;font-size:12px">تقدر تكلّمه بالدردشة 💬 قبل ما ترد</div></div>
+<div class="panel" id="p20" style="max-height:88vh;overflow:auto"><h3>🏰 مدينة مشتركي تيك توك</h3><div id="vip20"></div><div class="row"><button id="cancel20">إغلاق</button></div></div>
+<div class="panel" id="p21" style="max-height:88vh;overflow:auto"><h3>🤝 اطلب مرافقة</h3>
+ <div class="info" style="margin:0 0 6px">وين تبي تروح؟ (لو وافق يروحون معك الاثنين)</div><div class="says" id="cqDest"></div>
+ <div class="info" style="margin:8px 0 4px">اختر مين يرافقك (الأقرب لك أول — تقدر تختار أكثر من شخص):</div><div class="says" id="cqPpl" style="max-height:200px;overflow:auto"></div>
+ <div class="row" style="margin-top:8px"><button class="main" id="cqSend">📨 أرسل الطلب</button><button id="cancel21">إلغاء</button></div></div>
+<div id="cqBox"><div id="cqT"></div><div class="row"><button class="main" id="cqYes">✅ أوافق</button><button id="cqNo">❌ اعتذر</button></div></div>
+<div class="panel" id="p19"><h3>👥 اللي داخل بيتك</h3><div class="says" id="inList"></div><div class="row"><button id="cancel19">إغلاق</button></div></div>
+<div id="joy"><div id="knob"></div></div>
+<button id="jumpBtn">⬆️ قفز</button>
+<button id="brakeBtn" aria-label="فرامل"><i>🛑</i><b>فرامل</b></button><button id="gasBtn" aria-label="سرعة"><i>⚡</i><b>سرعة</b></button>
+<button id="carBtn">🚗 اركب</button>
+<div class="panel" id="p9"><h3>وين تبي تروح؟</h3><div class="stack"><button class="main" id="goPlaza">🏟️ الساحة</button><button id="goMall">🏬 المول</button><button id="goCraft">⛏️ عالم البناء</button><button id="goTrack">🏁 الحلبة (خط البداية)</button><button id="goGames">🎮 قسم الألعاب</button><button id="goFair">🎡 مدينة الألعاب</button><button id="goHome">🏠 بيتي</button><button id="goCq">🤝 اطلب مرافقة</button><button id="cancel9">إلغاء</button></div></div>
+
+<div class="panel" id="p1">
+ <h3>🏠 ابنِ بيتك بالمدينة — اكتب اسمك</h3>
+ <input id="name" maxlength="18" placeholder="اسمك (يظهر فوق بيتك)" autocomplete="off">
+ <label class="lbl" for="pin" id="pinL">🔑 رمز سري لبيتك — تحتاجه لو غيّرت جوالك أو تبي تعدّل بيتك</label>
+ <input id="pin" type="password" maxlength="20" placeholder="4 خانات أو أكثر" autocomplete="new-password">
+ <label class="lbl">🧍 اختر شخصيتك (تتمشى فيها بالمدينة)</label>
+ <div class="chars" id="chars1"></div>
+ <div class="info">بيتك يبدأ <b>خيمة</b> ويكبر كل يوم ترجع فيه للمدينة:<br>⛺ خيمة ← يوم 2 بيت طين ← يوم 4 فيلا ← يوم 7 برج ← يوم 12 قلعة 🏰</div>
+ <div class="row"><button class="main" id="next">اختر الأرض ←</button><button id="cancel1">إلغاء</button></div>
+ <button id="have1" style="display:block;margin:8px auto 0;font:inherit;font-size:13px;background:none;border:0;color:#2d6fb8;text-decoration:underline;cursor:pointer">🔑 عندي بيت من قبل؟ ارجع له</button>
+ <div class="msg" id="msg1"></div>
+</div>
+<div class="panel" id="p3"><h3>🏆 الأكثر لايكات</h3><div class="lb" id="lb"></div><div class="row"><button id="cancel3">إغلاق</button></div></div>
+<div class="panel" id="p2">
+ <h3 id="p2t">اضغط على أي أرض خضراء</h3>
+ <div class="row" style="align-items:center;justify-content:center;margin-bottom:8px"><button id="prevFree" title="المكان السابق">▶</button><b id="freeN" style="min-width:130px;text-align:center;font-size:14px"></b><button id="nextFree" title="مكان متاح ثاني">◀</button></div>
+ <div class="row"><button class="main" id="confirm" disabled>ابنِ هنا</button><button id="cancel2">رجوع</button></div>
+ <div class="msg" id="msg2"></div>
+</div>
+<div class="panel" id="p4">
+ <h3 id="p4t">🔑 هذا بيتك؟</h3>
+ <div class="info">اكتب الرمز السري اللي حطيته وقت البناء، ويرجع لك بيتك على هذا الجهاز.</div>
+ <input id="pin4" type="password" maxlength="20" placeholder="رمز بيتك" autocomplete="current-password">
+ <div class="row" style="margin-top:12px"><button class="main" id="claim">استرجع بيتي</button><button id="cancel4">إلغاء</button></div>
+ <div class="msg" id="msg4"></div>
+</div>
+<div class="panel" id="p5">
+ <h3>⚙️ التحكم ببيتي</h3>
+ <div id="setPinBox">
+  <div class="info">بيتك ما له رمز سري. حط رمز عشان تقدر تسترجعه لو غيّرت جوالك وتتحكم فيه.</div>
+  <input id="pinNew" type="password" maxlength="20" placeholder="رمز جديد (4 خانات أو أكثر)" autocomplete="new-password">
+  <div class="stack"><button class="main" id="savePin">حفظ الرمز</button></div>
+ </div>
+ <div id="manageBox">
+  <label class="lbl" for="newName">اسم البيت</label>
+  <input id="newName" maxlength="18" autocomplete="off">
+  <label class="lbl" for="pin5" id="pin5L">🔑 رمز بيتك (مطلوب لأي تعديل)</label>
+  <input id="pin5" type="password" maxlength="20" placeholder="رمز بيتك" autocomplete="current-password">
+  <div class="stack"><button class="main" id="rename">تغيير الاسم</button><button class="danger" id="del">🗑️ حذف البيت</button></div>
+ </div>
+ <div class="stack"><button id="cancel5">إغلاق</button></div>
+ <div class="msg" id="msg5"></div>
+</div>
+<div class="panel" id="p7" style="max-height:88vh;overflow:auto">
+ <h3 id="p7t">💬 رسالة</h3>
+ <div class="row" id="p7top"><button class="main" id="cq7">🤝 اطلب مرافقة</button><button class="main" id="ride7" style="display:none">🚗 اركب معه</button></div>
+ <div class="lbl" style="margin:6px 0 2px;font-size:12px">⚡ رسائل سريعة (اضغط وترسل):</div>
+ <div class="says" id="says"></div>
+ <div class="says" id="countries" style="display:none"></div>
+ <div class="lbl" id="typedLbl" style="margin:8px 0 2px;font-size:12px;display:none">✍️ أو اكتب رسالتك — 🔒 ممنوع الروابط والأرقام والحسابات:</div>
+ <div class="row" id="typedRow" style="align-items:center;display:none"><input id="say7" maxlength="80" placeholder="اكتب رسالتك…" autocomplete="off" style="flex:3"><button class="main" id="send7" style="flex:1;padding:10px 12px;font-size:16px">إرسال</button></div>
+ <div class="row"><button id="ma7" style="display:none">🛡️ حوّله مشرف</button></div>
+ <div class="row" id="mrow7" style="display:none"><button id="mb7h" class="danger">🔇 امنعه ساعة</button><button id="mb7d" class="danger">🔇 امنعه يوم</button><button id="mb7u" style="display:none">✅ فك المنع</button></div>
+ <div class="row"><button id="tp7" style="display:none">✍️ افتح له الكتابة الحرة</button></div>
+ <div class="row"><button class="danger" id="mute7">🚫 حظر</button><button id="rep7">🚩 تبليغ</button><button id="cancel7">إغلاق</button></div>
+</div>
+<div class="panel" id="p15" style="max-height:88vh;overflow:auto"><h3>🚗 سيارتي</h3><div id="carList"></div><div class="row"><button id="cancel15">إلغاء</button></div></div>
+<div class="panel" id="p16"><h3>⚙️ الإعدادات</h3>
+ <label class="lbl">🔊 مستوى الصوت <b id="volTxt"></b></label><input type="range" id="vol16" min="0" max="100" step="5" style="padding:0;height:34px">
+ <div class="row" style="margin:8px 0"><button id="mute16">🔇 كتم الصوت</button></div>
+ <label class="lbl">🖼️ جودة الصور: <b id="qTxt"></b></label><input type="range" id="q16" min="0" max="4" step="1" style="padding:0;height:34px">
+ <div class="info" style="margin:4px 0 8px">لو اللعبة تهنّج على جوالك خفّض الجودة — تصير الصورة أخف وأسرع (بدون ظلال بالمستويات المنخفضة).</div>
+ <div id="g16" style="margin:10px 0 4px;padding:10px;border:2px solid #dbe3ee;border-radius:14px;display:none"><b>🔐 توثيق الحساب</b><div class="info" id="g16t" style="margin:4px 0 8px"></div><button class="gbtn" id="g16b" style="width:100%"><svg viewBox="0 0 48 48" width="22" height="22" style="vertical-align:middle;margin-inline-end:6px"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>ربط الحساب بقوقل</button></div>
+ <div class="row" style="margin:6px 0"><button id="land16" style="background:#f1f3f5;font-weight:800">🔄 وضع أفقي (شاشة كاملة)</button></div>
+ <div class="row" style="margin:6px 0"><button id="push16" style="background:#eef6ff;font-weight:800">🔔 فعّل إشعارات الجوال</button></div>
+ <div class="row" style="margin:6px 0"><button id="inst16" style="background:#e7f5ff;font-weight:800">📲 حط اللعبة بشاشة جوالك</button></div>
+ <div class="row" style="margin:6px 0"><button id="inv16" style="background:#fff4d6;font-weight:800">🎁 ادعُ صديق واكسب 100 🪙</button></div>
+ <div class="row"><button class="main" id="close16">تم</button></div></div>
+<div class="panel" id="p17"><h3>🕺 اختر حركة</h3><div class="stack"><button class="main" id="emDance">💃 رقص</button><button id="emSit">🪑 جلوس</button><button id="emStop">🧍 وقوف عادي</button><button id="cancel17">إلغاء</button></div></div>
+<div id="instBar"><img src="/icon-192.png" alt=""><div><b>📲 حط «مدينة من الصفر» بشاشة جوالك</b><small id="instTxt">تدخلها بضغطة وحدة مثل أي تطبيق</small></div><button id="instGo">أضف</button><button id="instX" aria-label="إغلاق">✕</button></div>
+<div class="panel" id="p30"><div class="mk-head"><h3>🛒 السوق</h3><span class="mk-coins" id="mkCoins"></span></div><div class="mk-tabs" id="mkTabs"></div><div class="mk-grid" id="mkGrid"></div><div class="mk-sheet" id="mkSheet"></div><div class="row"><button id="cancel30">إغلاق</button></div></div>
+<div class="panel" id="p18" style="max-height:82vh;overflow:auto"><h3>🪙 محفظتي ومهامي</h3><div id="eco18"></div><div class="row"><button id="cancel18">إغلاق</button></div></div>
+<div class="panel" id="p14"><h3 id="p14t">📜 آخر رسائله</h3><div class="hist" id="hist14"></div><div class="row"><button class="main" id="rep14">💬 رد</button><button id="cancel14">إغلاق</button></div></div>
+<div class="panel" id="p8"><h3>👥 الناس اللي حولك</h3><div class="lb" id="ppl"></div><div class="row"><button id="cancel8">إغلاق</button></div></div>
+<div class="panel" id="p13"><h3 id="p13t">🚩 تبليغ</h3><div class="says" id="reasons"></div>
+ <div class="info" style="margin:0 0 8px">البلاغ يوصل للمشرف، ونحظره عنك تلقائياً.</div>
+ <div class="row"><button id="cancel13">إلغاء</button></div><div class="msg" id="msg13"></div></div>
+<div class="panel" id="p12" style="max-height:88vh;overflow:auto"><h3>🛡️ لوحة المشرف</h3>
+ <div id="adminLogin"><input id="adminTok" type="password" placeholder="رمز المشرف" autocomplete="current-password">
+  <label class="lbl" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="adminRem" style="width:auto"> تذكّرني على هذا الجهاز</label>
+  <div class="stack"><button class="main" id="adminGo">دخول</button></div></div>
+ <div id="adminMain" style="display:none"></div>
+ <div class="stack"><button id="adminOut" style="display:none">تسجيل خروج</button><button id="cancel12">إغلاق</button></div><div class="msg" id="msg12"></div></div>
+<div class="panel" id="p10"><h3>👋 أهلاً بك في المدينة!</h3>
+ <div class="info">هل عندك بيت من قبل؟ لو دخلت من جوال جديد أو مسحت بيانات المتصفح، ارجع لبيتك برمزك السري.</div>
+ <div class="stack"><button class="gbtn" id="wlG" style="display:none"><svg viewBox="0 0 48 48" width="22" height="22" style="vertical-align:middle;margin-inline-end:6px"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>سجّل بقوقل — يحفظ بيتك وتدخل من أي جهاز</button><button id="wlHave">🔑 عندي بيت — ارجع لبيتي</button><button id="wlNew">🏠 أول مرة — أبني بيتي بدون ربط</button><button id="wlLook">👀 أتفرج بالساحة</button></div></div>
+<div class="panel" id="p11"><h3>🔑 دوّر على بيتك</h3>
+ <input id="q11" maxlength="18" placeholder="اكتب اسم بيتك…" autocomplete="off">
+ <div class="lb" id="res11"></div>
+ <div class="info" style="margin:0 0 8px">اضغط على بيتك واكتب الرمز السري اللي حطيته وقت البناء.</div>
+ <div class="row"><button id="cancel11">إغلاق</button></div></div>
+<div class="panel" id="p6">
+ <h3>👕 اختر شخصيتك</h3>
+ <div class="chars" id="chars6"></div><div id="leg6" style="display:none"></div><div id="shop6"></div>
+ <div id="wardrobe"></div>
+ <div class="row"><button id="cancel6">إغلاق</button></div>
+ <div class="msg" id="msg6"></div>
+</div>
+
+
+</body></html>
