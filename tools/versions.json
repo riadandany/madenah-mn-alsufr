@@ -1,0 +1,74 @@
+{
+  "chars.js": {
+    "v": 9,
+    "hash": "088d8b52bbf858c7"
+  },
+  "audio.js": {
+    "v": 5,
+    "hash": "7fb959d759211519"
+  },
+  "district.js": {
+    "v": 13,
+    "hash": "5bc31c086b885fe1"
+  },
+  "palace.js": {
+    "v": 1,
+    "hash": "244a95f1ba5f68f4"
+  },
+  "games.js": {
+    "v": 14,
+    "hash": "18276d39424cf05f"
+  },
+  "fair.js": {
+    "v": 1,
+    "hash": "edd8641d46c72c56"
+  },
+  "jobs.js": {
+    "v": 14,
+    "hash": "8c3efcf69a946923"
+  },
+  "voxworld.js": {
+    "v": 17,
+    "hash": "8c697ba9c4e93ed6"
+  },
+  "worlds.js": {
+    "v": 3,
+    "hash": "3fe57eb5abc6df3a"
+  },
+  "mall.js": {
+    "v": 4,
+    "hash": "e1bbd325547f3ccb"
+  },
+  "vipcity.js": {
+    "v": 2,
+    "hash": "5887e6ef84fe7c58"
+  },
+  "Cairo.woff2": {
+    "v": 1,
+    "hash": "c3ce2735cf981785"
+  },
+  "boot.js": {
+    "v": 3,
+    "hash": "e43059e87feed745"
+  },
+  "app.js": {
+    "v": 129,
+    "hash": "a7c4abae656c8a20"
+  },
+  "voxcore.js": {
+    "v": 8,
+    "hash": "213dab0bef818eab"
+  },
+  "physics.js": {
+    "v": 1,
+    "hash": "1f8ccb2569f96598"
+  },
+  "rapier-world.js": {
+    "v": 1,
+    "hash": "6551a3ee6c0298e2"
+  },
+  "icons.js": {
+    "v": 3,
+    "hash": "dc97effc2e7d21c4"
+  }
+}

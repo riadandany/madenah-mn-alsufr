@@ -1,0 +1,20 @@
+{
+  "name": "madinah",
+  "version": "117.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "check": "node tools/check.mjs",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:server": "node tools/run-server-tests.mjs",
+    "test": "npm run check && npm run test:unit && npm run test:server",
+    "versions:bump": "node tools/versions.mjs bump",
+    "versions:check": "node tools/versions.mjs check"
+  },
+  "devDependencies": {
+    "@dimforge/rapier3d-compat": "0.14.0"
+  }
+}
